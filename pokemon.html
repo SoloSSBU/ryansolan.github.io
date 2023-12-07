@@ -1,0 +1,105 @@
+
+
+<!DOCTYPE HTML>
+<!--
+	Landed by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>Pokémon Teambuilder</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+		<style>
+			.result-scroll {
+				max-height: 300px; /* Set the maximum height you desire */
+				overflow: auto;
+				white-space: pre-line; /* Preserve line breaks */
+			}
+		</style>
+		
+	</head>
+	<body class="is-preload">
+		<div id="page-wrapper">
+
+			<!-- Header -->
+			<header id="header">
+				<h1><ul class = "icons">
+					<li><a href="https://github.com/SoloSSBU" class="icon brands alt fa-github"></a></li>
+					<li><a href="https://www.linkedin.com/in/ryan-solan/" class="icon brands alt fa-linkedin-in"></a></li>
+				</ul>
+			</h1>
+				<nav id="nav">
+					<ul>
+						<li><a href="index.html" class="button primary">Portfolio</a></li>
+					</ul>
+				</nav>
+			</header>
+			
+			<!-- Main -->
+				<div id="main" class="wrapper style1">
+					<div class="container">
+						<header class="major">
+							<h2>Random Pokémon Teambuilder</h2>
+							<p>Select your favorite Pokémon and build a random team out of them</p>
+						</header>
+						<ul class="actions">
+							<li><button id="runTeamBuilder" class="button">Run Teambuilder</button></li>
+							<button id="copyButton" class="button" disabled>Copy Team</button>
+						</ul>
+						<pre><code><div id="result-container" class="result-scroll"><!-- Result will be displayed here --></div></code></pre>
+
+					</div>
+				</div>
+					
+
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/jquery.scrolly.min.js"></script>
+			<script src="assets/js/jquery.dropotron.min.js"></script>
+			<script src="assets/js/jquery.scrollex.min.js"></script>
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
+			<script type="module" src="../pokelogic.mjs"></script>
+			<script type="module" src="../getbuild.mjs"></script>
+			<script>
+				try {
+					var teamBuilderButton = document.getElementById('runTeamBuilder');
+					var copyButton = document.getElementById('copyButton');
+			
+					teamBuilderButton.addEventListener('click', function () {
+						pokeLogic().then(result => {
+							console.log("Result:", result);
+			
+							// Enable the copy button
+							copyButton.disabled = false;
+			
+							// Display the result
+							var resultContainer = document.getElementById('result-container');
+							resultContainer.innerText = result;
+						}).catch((error) => {
+							console.error("Error:", error);
+						});
+					});
+			
+					copyButton.addEventListener('click', function () {
+						var resultContainer = document.getElementById('result-container');
+						var textarea = document.createElement('textarea');
+						textarea.value = resultContainer.innerText;
+						document.body.appendChild(textarea);
+						textarea.select();
+						document.execCommand('copy');
+						document.body.removeChild(textarea);
+						alert('Team copied to clipboard!');
+					});
+				} catch (error) {
+					console.log(error);
+				}
+			</script>
+	</body>
+</html>
