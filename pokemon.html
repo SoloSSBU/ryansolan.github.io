@@ -1,17 +1,11 @@
-
-
 <!DOCTYPE HTML>
-<!--
-	Landed by HTML5 UP
-	html5up.net | @ajlkn
-	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
--->
 <html>
 	<head>
 		<title>Pokémon Teambuilder</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="assets/css/main.css" />
+		<link rel="icon" href="images/fav.png" type="image/x-icon">
 		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
 		<style>
 			.result-scroll {
@@ -51,6 +45,122 @@
 							<button id="copyButton" class="button" disabled>Copy Team</button>
 						</ul>
 						<pre><code><div id="result-container" class="result-scroll"><!-- Result will be displayed here --></div></code></pre>
+							<head>
+								<meta charset="UTF-8">
+								<meta name="viewport" content="width=device-width, initial-scale=1.0">
+								<title>Pokémon Selector</title>
+								<style>
+									#pokemonList {
+										list-style-type: none;
+										padding-left: 40px;
+										display: flex;
+										flex-wrap: wrap;
+										gap: 10px;
+										max-height: 640px; /* Set the max height to limit rows */
+										overflow-y: auto;
+									}
+							
+									.pokemonItem {
+										border: 1px solid #ff6666;
+										padding: 10px;
+										text-align: center;
+										cursor: pointer;
+										transition: background-color 0.3s;
+										width: 120px;
+										height: 150px;
+									}
+							
+									.pokemonItem:hover {
+										background-color: #ff6b6b83;
+									}
+									.pokemonItem.selected {
+										background-color: #ff6666;
+									}
+							
+									#searchBar {
+										margin-bottom: 10px;
+									}
+								</style>
+							</head>
+							<body>
+								<input type="text" id="searchBar" placeholder="Search Pokémon">
+								<ul id="pokemonList"></ul>
+							
+								<script>
+									// Declare pokemonData variable in a scope accessible to all functions
+									var pokemonData;
+									var selectedPokemon = [];
+							
+									// Load Pokemon data from pokedata.json
+									fetch('pokedata.json')
+										.then(response => response.json())
+										.then(data => {							
+											// Assign 'data' to the pokemonData variable
+											pokemonData = data;
+											renderPokemonList(''); // Initial render
+										})
+										.catch(error => console.error('Error loading Pokemon data:', error));
+							
+									const searchBar = document.getElementById('searchBar');
+									const pokemonList = document.getElementById('pokemonList');
+							
+									// Function to render Pokémon list
+									function renderPokemonList(filter) {
+										// Clear the current list
+										pokemonList.innerHTML = '';
+							
+										// Ensure pokemonData is defined before using it
+										if (!pokemonData) {
+											console.error('Pokemon data is not loaded.');
+											return;
+										}
+							
+										// Filter Pokémon based on the search bar input
+										const filteredPokemon = pokemonData.filter(pokemon =>
+											pokemon.name.toLowerCase().includes(filter.toLowerCase())
+										);
+							
+										// Create and append list items for each Pokémon
+										filteredPokemon.forEach(pokemon => {
+											const listItem = document.createElement('li');
+											listItem.className = 'pokemonItem';
+											listItem.innerHTML = `
+												<img src="${pokemon.image}" alt="${pokemon.name}" style="width: 80px; height: 80px;">
+												<p>${pokemon.name}</p>
+											`;
+											// Attach click event to the list item
+											listItem.addEventListener('click', () => togglePokemon(listItem, pokemon));
+											pokemonList.appendChild(listItem);
+										});
+									}
+							
+									// Function to handle Pokémon selection
+									function togglePokemon(listItem, pokemon) {
+										// Check if the Pokémon is already selected
+										const index = selectedPokemon.findIndex(p => p.name === pokemon.name);
+
+										if (index === -1) {
+											// If not selected, add to the list
+											selectedPokemon.push(pokemon);
+										} else {
+											// If already selected, remove from the list
+											selectedPokemon.splice(index, 1);
+										}
+
+										// Toggle the background color
+										listItem.classList.toggle('selected');
+									}
+
+							
+									// Add an input event listener to the search bar
+									searchBar.addEventListener('input', () => renderPokemonList(searchBar.value));
+								</script>
+								
+							</body>
+							</html>
+
+
+
 
 					</div>
 				</div>
@@ -73,9 +183,9 @@
 					var copyButton = document.getElementById('copyButton');
 			
 					teamBuilderButton.addEventListener('click', function () {
-						pokeLogic().then(result => {
+						pokeLogic(selectedPokemon).then(result => {
 							console.log("Result:", result);
-			
+							
 							// Enable the copy button
 							copyButton.disabled = false;
 			

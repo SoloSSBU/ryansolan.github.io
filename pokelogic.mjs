@@ -1,10 +1,14 @@
 import getBuild from './getbuild.mjs';
-async function pokeLogic() {
-    var mons = ["Snorlax", "KangasKhan", "Maushold", "Arcanine", "Charizard", "Ceruledge", "Hitmontop", "Annihilape", "Lucario", "Blastoise", "Feraligatr", "Politoed", "Gyarados",
-    "Dragonite", "Corviknight", "Breloom", "Ludicolo", "Torterra", "Venusaur", "Drapion", "Clodsire", "Raichu", "Jolteon", "Ampharos", "Swampert", "Garchomp", "Gardevoir", "Espeon", "Metagross", "Golem", "Tyranitar",
-    "Shuckle", "Lapras", "Cetitan", "ninetales-alola", "Scizor", "Heracross", "Shedinja", "Goodra", "Druddigon",
-    "Dracovish", "Gengar", "Gholdengo", "Dusknoir", "Umbreon", "Obstagoon", "KingGambit",
-    "Empoleon", "Aggron", "sandslash-alola", "Azumarill", "Sylveon", "Dachsbun"]
+async function pokeLogic(selectedPokemon) {
+    if (selectedPokemon) {
+        var mons = selectedPokemon
+    } else {
+        var mons = ["Snorlax", "KangasKhan", "Maushold", "Arcanine", "Charizard", "Ceruledge", "Hitmontop", "Annihilape", "Lucario", "Blastoise", "Feraligatr", "Politoed", "Gyarados",
+        "Dragonite", "Corviknight", "Breloom", "Ludicolo", "Torterra", "Venusaur", "Drapion", "Clodsire", "Raichu", "Jolteon", "Ampharos", "Swampert", "Garchomp", "Gardevoir", "Espeon", "Metagross", "Golem", "Tyranitar",
+        "Shuckle", "Lapras", "Cetitan", "ninetales-alola", "Scizor", "Heracross", "Shedinja", "Goodra", "Druddigon",
+        "Dracovish", "Gengar", "Gholdengo", "Dusknoir", "Umbreon", "Obstagoon", "KingGambit",
+        "Empoleon", "Aggron", "sandslash-alola", "Azumarill", "Sylveon", "Dachsbun"]
+    }
 
     var types = {
         "Snorlax": ["Normal"], 
@@ -62,52 +66,72 @@ async function pokeLogic() {
         "Sylveon": ["Fairy"], 
         "Dachsbun": ["Fairy"]
     }
-
-
-    var newtypes = []
     var randMons = mons.sort(() => Math.random() - 0.5)
     var i = 0
     var loadouts = ""
     return new Promise(async (resolve, reject) => {
         for (const curMon of randMons) {
-            //console.log(curMon)
             if (i >= 6){
                 break;
             }
-            //make sure that the new pokemon's types are unique to the team
-            var type = types[curMon]
-            var addToTeam = true
-            var newtypesinterim = []
-            for (var k in type){
-                if (newtypes.includes(type[k])){
-                    addToTeam = false
-                    break
+            try {
+                var load = await getBuild(curMon['name']);
+                if (load !== '') {
+                    loadouts = loadouts.concat(load + '\n')
+                    i++
                 }
-                else{
-                    newtypesinterim.push(type[k])
-                }
+            } catch (error){
+                console.log("Can't find build for", curMon['name']);
             }
-            if (addToTeam) {
-                try {
-                    var load = await getBuild(curMon);
-                    if (load !== '') {
-                        loadouts = loadouts.concat(load + '\n')
-                        newtypes.push(newtypesinterim)
-                        i++
-                    }
-                } catch (error){
-                    //console.log("Can't find build for", curMon);
-                }
                 
-            }
-        
         }
         resolve(loadouts)
     })
 }
-// pokeLogic().then(result => {
-//     console.log("Result:", result);
-// }).catch((error) => {
-//     console.error("Error:", error);
-// })
 window.pokeLogic = pokeLogic;
+
+
+
+
+//UNIQUE TYPING VARIANT
+//     var newtypes = []
+//     var randMons = mons.sort(() => Math.random() - 0.5)
+//     var i = 0
+//     var loadouts = ""
+//     return new Promise(async (resolve, reject) => {
+//         for (const curMon of randMons) {
+//             if (i >= 6){
+//                 break;
+//             }
+//             //make sure that the new pokemon's types are unique to the team
+//             var type = types[curMon]
+//             var addToTeam = true
+//             var newtypesinterim = []
+//             for (var k in type){
+//                 if (newtypes.includes(type[k])){
+//                     addToTeam = false
+//                     break
+//                 }
+//                 else{
+//                     newtypesinterim.push(type[k])
+//                 }
+//             }
+//             if (addToTeam) {
+//                 try {
+//                     var load = await getBuild(curMon);
+//                     if (load !== '') {
+//                         loadouts = loadouts.concat(load + '\n')
+//                         newtypes.push(newtypesinterim)
+//                         i++
+//                     }
+//                 } catch (error){
+//                     //console.log("Can't find build for", curMon);
+//                 }
+                
+//             }
+        
+//         }
+//         resolve(loadouts)
+//     })
+// }
+// window.pokeLogic = pokeLogic;

@@ -2156,7 +2156,7 @@ input, select, textarea {
 	header p {
 		color: #ffffff;
 		position: relative;
-		margin: 0 0 1.5em 0;
+		margin: 0 0 0em 0;
 	}
 
 	header h2 + p {
@@ -2180,7 +2180,7 @@ input, select, textarea {
 	}
 
 	header.major {
-		margin: 0 0 4em 0;
+		margin: 0 0 1em 0;
 		position: relative;
 		text-align: center;
 	}
